@@ -1,0 +1,19 @@
+.admin-layout {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 16px;
+  padding: 16px;
+}
+
+.admin-content {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+}

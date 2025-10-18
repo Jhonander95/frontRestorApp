@@ -1,0 +1,20 @@
+<div class="dashboard grid">
+  <div class="col-12 md:col-4">
+    <p-card header="Ventas de Hoy" subheader="Resumen diario">
+      <h2>{{ stats().sales | currency:'COP' }}</h2>
+      <ng-template pTemplate="footer">
+        <button pButton label="Ver reportes" icon="pi pi-chart-bar" routerLink="/admin/reports"></button>
+      </ng-template>
+    </p-card>
+  </div>
+  <div class="col-12 md:col-4">
+    <p-card header="Pedidos">
+      <h2>{{ stats().orders }}</h2>
+    </p-card>
+  </div>
+  <div class="col-12 md:col-4">
+    <p-card header="Método más usado">
+      <h3>{{ stats().topPayment }}</h3>
+    </p-card>
+  </div>
+</div>

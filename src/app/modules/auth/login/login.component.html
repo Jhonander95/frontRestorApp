@@ -1,0 +1,9 @@
+<p-toast></p-toast>
+<div class="login-container">
+  <h2>RestorApp</h2>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <input pInputText formControlName="username" placeholder="Usuario" />
+    <input pInputText formControlName="password" placeholder="Contraseña" type="password" />
+    <button pButton label="Ingresar" type="submit"></button>
+  </form>
+</div>

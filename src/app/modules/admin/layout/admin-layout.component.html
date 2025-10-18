@@ -1,0 +1,17 @@
+<div class="admin-layout">
+  <p-toolbar>
+    <div class="p-toolbar-group-left">
+      <h2>RestorApp — Panel Admin</h2>
+    </div>
+    <div class="p-toolbar-group-right">
+      <button pButton label="Cerrar sesión" icon="pi pi-sign-out" (click)="logout()"></button>
+    </div>
+  </p-toolbar>
+
+  <div class="admin-body">
+    <p-panelMenu [model]="menuItems"></p-panelMenu>
+    <div class="admin-content">
+      <router-outlet />
+    </div>
+  </div>
+</div>
