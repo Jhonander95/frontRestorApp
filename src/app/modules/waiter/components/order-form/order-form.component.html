@@ -9,9 +9,21 @@
     <p-dropdown [options]="orderTypes" [(ngModel)]="order.type" optionLabel="label" optionValue="value"></p-dropdown>
   </div>
 
+  @if (order.type === 'mesa') {
+    <div class="p-field">
+      <label>Número de mesa</label>
+      <p-inputNumber [(ngModel)]="order.table_number" [min]="1"></p-inputNumber>
+    </div>
+  }
+
+  <div class="p-field">
+    <label>Buscar producto</label>
+    <input pInputText [(ngModel)]="productQuery" placeholder="Ej. café, hamburguesa..." />
+  </div>
+
   <h3>Productos</h3>
   <div class="products">
-    @for (p of products(); track p.id) {
+    @for (p of productsFiltered(); track p.id) {
       <div class="product-item" (click)="addItem(p)">
         <div class="name">{{ p.name }}</div>
         <small>{{ p.price | currency:'COP' }}</small>
@@ -46,9 +58,6 @@
       </tr>
     </ng-template>
   </p-table>
-
-  <h3>Métodos de pago</h3>
-  <app-payment-selector [(payments)]="order.payments" [total]="getTotal()" (paymentsChange)="onPaymentsChange($event)"></app-payment-selector>
 
   <div class="total">
     <strong>Total: {{ getTotal() | currency:'COP' }}</strong>

@@ -10,15 +10,14 @@ import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { ProductService } from '../../../menu/services/product.service';
 import { OrderService } from '../../services/order.service';
-import { PaymentSelectorComponent } from '../payment-selector/payment-selector.component';
 
 @Component({
   selector: 'app-order-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, InputTextModule, DropdownModule, TableModule, ButtonModule, InputNumberModule, ToastModule, PaymentSelectorComponent],
+  imports: [CommonModule, FormsModule, InputTextModule, DropdownModule, TableModule, ButtonModule, InputNumberModule, ToastModule],
   providers: [MessageService],
   templateUrl: './order-form.component.html',
-  styleUrl: './order-form.component.scss',
+  styleUrls: ['./order-form.component.scss'],
 })
 export class OrderFormComponent {
   private readonly productService = inject(ProductService);
@@ -29,11 +28,11 @@ export class OrderFormComponent {
   @Output() closed = new EventEmitter<void>();
 
   // Modelo de pedido (no signal para permitir [(ngModel)])
-  order: { customer_name: string; type: string; items: any[]; payments: any[] } = {
+  order: { customer_name: string; type: string; table_number?: number | null; items: any[] } = {
     customer_name: '',
     type: 'mesa',
+    table_number: null,
     items: [],
-    payments: [],
   };
 
   orderTypes = [
@@ -43,6 +42,13 @@ export class OrderFormComponent {
   ];
 
   products = signal<any[]>([]);
+  productQuery = '';
+  productsFiltered = computed(() => {
+    const q = (this.productQuery || '').toLowerCase().trim();
+    const list = this.products();
+    if (!q) return list;
+    return list.filter((p: any) => (p?.name || '').toLowerCase().includes(q));
+  });
 
   constructor() {
     this.loadProducts();
@@ -75,29 +81,21 @@ export class OrderFormComponent {
     return this.order.items.reduce((sum: number, it: any) => sum + (it.subtotal || 0), 0);
   }
 
-  onPaymentsChange(payments: any[]): void {
-    this.order.payments = payments || [];
-  }
-
   saveOrder(): void {
     const total = this.getTotal();
-    const paid = (this.order.payments || []).reduce((s: number, p: any) => s + (p.amount || 0), 0);
     if (total <= 0) {
       this.messageService.add({ severity: 'warn', summary: 'Validación', detail: 'Agrega al menos un producto' });
-      return;
-    }
-    if (Math.round((paid - total) * 100) / 100 !== 0) {
-      this.messageService.add({ severity: 'warn', summary: 'Pagos', detail: 'La suma de pagos debe ser igual al total' });
       return;
     }
 
     const payload = {
       customer_name: this.order.customer_name,
       type: this.order.type,
+      table_number: this.order.table_number ?? undefined,
       items: this.order.items.map((it: any) => ({ product_id: it.product_id, quantity: it.quantity, note: it.note })),
-      payments: this.order.payments.map((p: any) => ({ method_id: p.method_id, amount: p.amount })),
-      total,
     };
+
+    console.log('POST /orders/ payload', payload);
 
     this.orderService.create(payload).subscribe({
       next: () => this.saved.emit(),
