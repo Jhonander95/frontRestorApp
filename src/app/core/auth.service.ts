@@ -33,11 +33,28 @@ export class AuthService {
           res?.data?.token ??
           res?.token ??
           '';
-        const role = res?.data?.role ?? res?.role ?? null;
+        let role = res?.data?.role ?? res?.role ?? null;
         if (!token) throw new Error('Token no recibido');
         this.saveToken(token);
-        if (role) this.saveRole(role);
+        if (role) {
+          this.saveRole(role);
+        } else {
+          // Intentar extraer el rol del JWT si viene en el payload.
+          this.extractAndSaveRoleFromToken(token);
+          role = this.getUserRole();
+        }
         return token;
+      })
+    );
+  }
+
+  /** Obtiene el perfil del usuario autenticado (debe incluir rol). */
+  getProfile(): Observable<any> {
+    return this.api.get<any>('/auth/me').pipe(
+      map((res) => res?.data ?? res),
+      tap((profile) => {
+        const role: string | null = profile?.role ?? profile?.user?.role ?? null;
+        if (role) this.saveRole(role);
       })
     );
   }
@@ -66,11 +83,32 @@ export class AuthService {
 
   /** Guarda el rol del usuario si aplica. */
   private saveRole(role: string): void {
-    localStorage.setItem(this.ROLE_KEY, role);
+    const normalized = (role ?? '').toString().trim().toLowerCase();
+    if (normalized) {
+      localStorage.setItem(this.ROLE_KEY, normalized);
+    }
   }
 
   /** Obtiene el rol del usuario. */
   getUserRole(): string | null {
     return localStorage.getItem(this.ROLE_KEY);
+  }
+
+  /**
+   * Intenta decodificar el JWT y guardar el rol si está presente en el payload.
+   * Busca claves comunes como 'role' o 'roles'.
+   */
+  private extractAndSaveRoleFromToken(token: string): void {
+    try {
+      const parts = token.split('.');
+      if (parts.length !== 3) return;
+      const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
+      const role = payload?.role ?? (Array.isArray(payload?.roles) ? payload.roles[0] : null);
+      if (role && typeof role === 'string') {
+        this.saveRole(role);
+      }
+    } catch {
+      // Ignorar errores de decodificación
+    }
   }
 }

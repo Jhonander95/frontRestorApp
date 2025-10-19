@@ -21,4 +21,9 @@ export const routes: Routes = [
     loadChildren: () =>
       import('./modules/orders/orders.routes').then((m) => m.routes),
   },
+  {
+    path: 'waiter',
+    loadChildren: () =>
+      import('./modules/waiter/waiter.routes').then((m) => m.routes),
+  },
 ];

@@ -1,0 +1,19 @@
+<div class="payments">
+  @for (p of payments; let i = $index; track i) {
+    <div class="p-grid p-align-center">
+      <div class="p-col-6">
+        <p-dropdown [options]="paymentMethods()" [(ngModel)]="p.method_id" placeholder="Método"></p-dropdown>
+      </div>
+      <div class="p-col-4">
+        <p-inputNumber [(ngModel)]="p.amount" mode="currency" currency="COP" locale="es-CO"></p-inputNumber>
+      </div>
+      <div class="p-col-2">
+        <button pButton icon="pi pi-times" class="p-button-text p-button-danger" (click)="removePayment(i)"></button>
+      </div>
+    </div>
+  }
+
+  <button pButton label="Agregar Pago" icon="pi pi-plus" (click)="addPayment()"></button>
+  <p>Total pagos: {{ totalPayments() | currency:'COP' }}</p>
+  <p *ngIf="totalPayments() !== total" class="text-warn">⚠️ Los pagos no coinciden con el total</p>
+</div>

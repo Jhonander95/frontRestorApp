@@ -1,0 +1,61 @@
+<div class="p-fluid order-form">
+  <div class="p-field">
+    <label>Cliente</label>
+    <input pInputText [(ngModel)]="order.customer_name" />
+  </div>
+
+  <div class="p-field">
+    <label>Tipo de pedido</label>
+    <p-dropdown [options]="orderTypes" [(ngModel)]="order.type" optionLabel="label" optionValue="value"></p-dropdown>
+  </div>
+
+  <h3>Productos</h3>
+  <div class="products">
+    @for (p of products(); track p.id) {
+      <div class="product-item" (click)="addItem(p)">
+        <div class="name">{{ p.name }}</div>
+        <small>{{ p.price | currency:'COP' }}</small>
+      </div>
+    }
+  </div>
+
+  <h3>Resumen</h3>
+  <p-table [value]="order.items">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Producto</th>
+        <th style="width: 120px;">Cantidad</th>
+        <th>Nota</th>
+        <th style="width: 140px;">Subtotal</th>
+        <th style="width: 48px;"></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item let-i="rowIndex">
+      <tr>
+        <td>{{ item.name }}</td>
+        <td>
+          <p-inputNumber [(ngModel)]="item.quantity" [min]="1" (onInput)="onItemChange()"></p-inputNumber>
+        </td>
+        <td>
+          <input pInputText placeholder="Nota..." [(ngModel)]="item.note" />
+        </td>
+        <td>{{ item.subtotal | currency:'COP' }}</td>
+        <td>
+          <button pButton icon="pi pi-times" class="p-button-text p-button-danger" (click)="removeItem(i)"></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <h3>Métodos de pago</h3>
+  <app-payment-selector [(payments)]="order.payments" [total]="getTotal()" (paymentsChange)="onPaymentsChange($event)"></app-payment-selector>
+
+  <div class="total">
+    <strong>Total: {{ getTotal() | currency:'COP' }}</strong>
+  </div>
+
+  <div class="actions">
+    <button pButton label="Guardar Pedido" (click)="saveOrder()" class="p-button-success"></button>
+    <button pButton label="Cerrar" class="p-button-text" (click)="close()"></button>
+  </div>
+</div>

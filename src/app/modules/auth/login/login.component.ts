@@ -48,10 +48,31 @@ export class LoginComponent {
         next: () => {
           this.messageService.add({ severity: 'success', summary: 'Bienvenido', detail: 'Inicio de sesión exitoso' });
           const role = this.auth.getUserRole();
-          if (role === 'admin') {
-            this.router.navigateByUrl('/admin');
+          if (role) {
+            if (role === 'admin') {
+              this.router.navigateByUrl('/admin');
+            } else if (role === 'mesero') {
+              this.router.navigateByUrl('/waiter/orders');
+            } else {
+              this.router.navigateByUrl('/orders');
+            }
           } else {
-            this.router.navigateByUrl('/orders');
+            // Si no hay rol aún, intentar perfil y luego decidir
+            this.auth.getProfile().subscribe({
+              next: () => {
+                const fetchedRole = this.auth.getUserRole();
+                if (fetchedRole === 'admin') {
+                  this.router.navigateByUrl('/admin');
+                } else if (fetchedRole === 'mesero') {
+                  this.router.navigateByUrl('/waiter/orders');
+                } else {
+                  this.router.navigateByUrl('/orders');
+                }
+              },
+              error: () => {
+                this.router.navigateByUrl('/orders');
+              },
+            });
           }
         },
         error: (err: HttpErrorResponse) => {

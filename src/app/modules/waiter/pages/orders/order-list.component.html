@@ -1,0 +1,33 @@
+<p-toast></p-toast>
+
+<p-toolbar>
+  <div class="p-toolbar-group-left">
+    <h2>Pedidos</h2>
+  </div>
+  <div class="p-toolbar-group-right">
+    <button pButton label="Nuevo Pedido" icon="pi pi-plus" (click)="showForm()"></button>
+  </div>
+</p-toolbar>
+
+<p-table [value]="orders()">
+  <ng-template pTemplate="header">
+    <tr>
+      <th>ID</th>
+      <th>Cliente</th>
+      <th>Total</th>
+      <th>Estado</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-order>
+    <tr>
+      <td>{{ order.id }}</td>
+      <td>{{ order.customer_name }}</td>
+      <td>{{ order.total | currency:'COP' }}</td>
+      <td>{{ order.status }}</td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<p-dialog [visible]="displayForm()" [modal]="true" header="Nuevo Pedido" (onHide)="onClosed()">
+  <app-order-form (saved)="onSaved()" (closed)="onClosed()"></app-order-form>
+</p-dialog>
