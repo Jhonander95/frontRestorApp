@@ -1,0 +1,43 @@
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
+
+<p-toolbar>
+  <div class="p-toolbar-group-left">
+    <h2>Productos</h2>
+  </div>
+  <div class="p-toolbar-group-right">
+    <button pButton label="Nuevo producto" icon="pi pi-plus" (click)="openNew()"></button>
+  </div>
+</p-toolbar>
+
+<p-table [value]="products()" [loading]="loading()">
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Nombre</th>
+      <th>Precio</th>
+      <th>Disponible</th>
+      <th>Categoría</th>
+      <th>Descripción</th>
+      <th style="width: 180px;">Acciones</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-product>
+    <tr>
+      <td>{{ product.name }}</td>
+      <td>{{ product.price | currency:'COP' }}</td>
+      <td>
+        <i class="pi" [ngClass]="product.available ? 'pi-check-circle text-green-500' : 'pi-times-circle text-red-500'"></i>
+      </td>
+      <td>{{ product.category || '—' }}</td>
+      <td>{{ product.description || '—' }}</td>
+      <td class="actions">
+        <button pButton icon="pi pi-pencil" (click)="openEdit(product)" class="p-button-text"></button>
+        <button pButton icon="pi pi-trash" (click)="confirmDelete(product)" class="p-button-text p-button-danger"></button>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<p-dialog header="Producto" [visible]="displayForm()" (onHide)="onCancel()" [modal]="true" [style]="{width: '500px'}" [closable]="false">
+  <app-product-form [value]="currentProduct()" (saved)="onSaved()" (cancel)="onCancel()"></app-product-form>
+</p-dialog>

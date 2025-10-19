@@ -1,0 +1,31 @@
+<form [formGroup]="form" (ngSubmit)="save()" class="p-fluid">
+  <div class="p-field">
+    <label for="name">Nombre</label>
+    <input id="name" pInputText formControlName="name" />
+  </div>
+
+  <div class="p-field">
+    <label for="price">Precio</label>
+    <p-inputNumber inputId="price" formControlName="price" mode="currency" currency="COP" locale="es-CO"></p-inputNumber>
+  </div>
+
+  <div class="p-field">
+    <label for="available">Disponible</label>
+    <p-inputSwitch inputId="available" formControlName="available"></p-inputSwitch>
+  </div>
+
+  <div class="p-field">
+    <label for="category">Categoría</label>
+    <input id="category" pInputText formControlName="category" />
+  </div>
+
+  <div class="p-field">
+    <label for="description">Descripción</label>
+    <textarea id="description" pInputTextarea formControlName="description" rows="3"></textarea>
+  </div>
+
+  <div class="actions">
+    <button pButton type="button" label="Cancelar" class="p-button-text" (click)="onCancel()"></button>
+    <button pButton type="submit" label="Guardar" [disabled]="form.invalid"></button>
+  </div>
+</form>

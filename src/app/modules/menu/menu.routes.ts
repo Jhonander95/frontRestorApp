@@ -1,4 +1,9 @@
 import { Routes } from '@angular/router';
-
-// Rutas stub para 'menu' (productos). Se implementarán en el siguiente paso.
-export const routes: Routes = [];
+// Rutas del módulo de productos (menu)
+export const routes: Routes = [
+  {
+    path: '',
+    loadComponent: () =>
+      import('./pages/product-list/product-list.component').then(m => m.ProductListComponent),
+  },
+];
